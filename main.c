@@ -48,6 +48,7 @@
 
 // XC compiler include
 #include <xc.h>
+#include <stdint.h>
 
 // imageproc-lib includes
 #include "utils.h"          // CSP and BSP
@@ -74,11 +75,24 @@ int main() {
     LED_2 = 0;
     LED_3 = 0;
 
+
+    uint16_t res;
+    float a1,a3,th1,th2,T, temp;
+    a1 = 0.63;
+    a3 = 0.63;
+    th1 = 0.25;
+    th2 = 0.75;
+    T = 1.0;
+
     //Main loop
     while(1){
         //Example: Toggle an LED at 1Hz
-        delay_ms(1000);
-        LED_2 = ~LED_2;
+        Nop();
+
+        temp = (th1*(-a1 + a1*a3*T + a1*th2 - a3*th2))/(a1 - a1*a3*T + a3*th1 - a1*th2);
+        res = (uint16_t)temp;
+
+        Nop();
     }
 
     //This point should never be reached
