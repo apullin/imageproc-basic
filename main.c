@@ -76,13 +76,37 @@ int main() {
     LED_3 = 0;
 
 
+    int16_t t; //must be signed, for proper rollover
+    float tf;  //for calculation
+
     uint16_t res;
-    float a1,a3,th1,th2,T, temp;
+    float a1,a3,th1,th2,T, temp,resf;
     a1 = 0.63;
     a3 = 0.63;
     th1 = 0.25;
     th2 = 0.75;
     T = 1.0;
+
+    int16_t C1,D1,C2,D2,C3,D3;
+    int16_t t1,t2;
+
+    // t is (-32768,32767)
+    tf = (float)(t) / (float)(UINT16_MAX); // tf will be (-0.5, 0.5)
+
+    t1 = th1/a1;
+    t2 = (-1 + a3*T + th2)/a3;
+
+    if((0<= t) && (t < t1)){
+        resf = a1*t;
+    }
+    else if((t1<= t) && (t < t2)){
+        resf = (th2-th1)/(t2-t1) * (t-t1) + th1;
+    }
+    else if((t2<= t) && (t <= T)){
+        resf = a3*t + 1 - a3*T;
+    }
+
+    res = (int16_t)resf;
 
     //Main loop
     while(1){
@@ -91,9 +115,6 @@ int main() {
 
         temp = (th1*(-a1 + a1*a3*T + a1*th2 - a3*th2))/(a1 - a1*a3*T + a3*th1 - a1*th2);
         res = (uint16_t)temp;
-
-        Nop();
-    }
 
     //This point should never be reached
     return 0; 
